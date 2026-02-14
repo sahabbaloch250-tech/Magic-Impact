@@ -1117,13 +1117,14 @@ def debug_db():
         return f"<h2>Error:</h2><p>{str(e)}</p>"
 
 if __name__ == '__main__':
-    # Only create local folders if not using Railway/PostgreSQL
+    # Local folders for SQLite / uploads
     if not os.environ.get('DATABASE_URL'):
         os.makedirs('database', exist_ok=True)
     os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-    
+
     init_db()
-    
-    # Use Railway's PORT or default to 5000 for local
+
+    # Use PORT for local run
     port = int(os.environ.get('PORT', 5000))
-    app.run(debug=False, host='0.0.0.0', port=port)
+    # Only use Flask debug server for local
+    app.run(debug=True, host='0.0.0.0', port=port)
