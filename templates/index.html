@@ -34,6 +34,7 @@
                     {% if username %}
                         <span class="text-white me-2">👋 {{ username }}</span>
                         <a href="/dashboard" class="btn btn-outline-light btn-sm px-3">Dashboard</a>
+                        <a href="/withdraw" class="btn btn-success btn-sm px-3">💰 Withdraw</a>
                         <a href="/logout" class="btn btn-primary btn-sm px-3">Logout</a>
                     {% else %}
                         <a href="/login" class="btn btn-outline-light btn-sm px-3" id="navLogin">Login</a>
@@ -83,7 +84,7 @@
                         Professional portfolio management with industry-leading returns.
                     </p>
                     <div class="d-flex gap-3 mb-5 hero-buttons">
-                        <a href="/register" class="btn btn-primary btn-lg px-4 py-3 rounded-3">
+                        <a href="#plans" class="btn btn-primary btn-lg px-4 py-3 rounded-3">
                             Start Investing <i class="bi bi-arrow-right ms-2"></i>
                         </a>
                         <a href="#plans" class="btn btn-outline-light btn-lg px-4 py-3 rounded-3">
@@ -490,44 +491,103 @@
             </div>
         </div>
     </section>
-
-    <!-- Investment Modal -->
-    <div class="modal fade" id="investmentModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content glass-card">
+<!-- Investment Modal - Updated with Telegram & Better Feedback -->
+<div class="modal fade" id="investmentModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content glass-card">
+            <form action="/invest" method="POST" enctype="multipart/form-data" id="investmentForm">
                 <div class="modal-header border-0">
-                    <h5 class="modal-title fw-bold">Complete Your Investment</h5>
-                    <button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    <h5 class="modal-title fw-bold">
+                        <i class="bi bi-cash-stack text-primary me-2"></i>Complete Your Investment
+                    </h5>
+                    <button class="btn-close btn-close-white" data-bs-dismiss="modal" type="button"></button>
                 </div>
                 <div class="modal-body text-muted">
-                    <p><b>Selected Plan:</b> <span id="planName"></span></p>
-                    <p><b>Investment Amount:</b> Rs <span id="planAmount"></span></p>
-                    <hr>
-                    <h6 class="fw-bold text-white mb-2">Payment Details</h6>
-                    <p>
-                        Account Name: <b>YOUR NAME HERE</b><br>
-                        Bank: <b>YOUR BANK NAME</b><br>
-                        IBAN: <b>PK00XXXX0000000000</b>
-                    </p>
-                    <div class="glass-card p-4 mt-3">
-                        <h6 class="mb-3">Upload Payment Screenshot for Approval</h6>
-                        <label class="upload-box">
-                            <input type="file" accept="image/*" hidden>
-                            <div class="upload-content text-center">
-                                <i class="bi bi-cloud-arrow-up fs-1 mb-2"></i>
-                                <p class="mb-1">Drag & drop screenshot here</p>
-                                <small>or click to browse (JPG, PNG)</small>
-                            </div>
-                        </label>
+                    <input type="hidden" name="plan_name" id="planNameInput" required>
+                    <input type="hidden" name="amount" id="planAmountInput" required>
+                    <input type="hidden" name="daily_income" id="planDailyInput" required>
+                    
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="text-muted">Selected Plan:</span>
+                            <strong class="text-white" id="planName"></strong>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="text-muted">Investment Amount:</span>
+                            <strong class="text-primary">Rs <span id="planAmount"></span></strong>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="text-muted">Daily Income:</span>
+                            <strong class="text-success">Rs <span id="planDaily"></span></strong>
+                        </div>
+                    </div>
+                    
+                    <hr class="border-secondary">
+                    
+                    <h6 class="fw-bold text-white mb-3">
+                        <i class="bi bi-bank me-2"></i>Payment Details
+                    </h6>
+                    
+                    <!-- Bank Details with Purple Gradient -->
+                    <div class="alert mb-3" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; border-radius: 10px;">
+                        <p class="mb-1 text-white">
+                            <i class="bi bi-person-circle me-2"></i><b>Account Name:</b> NOOR UL NISA<br>
+                            <i class="bi bi-bank2 me-2"></i><b>Bank:</b> SADA PAY<br>
+                            <i class="bi bi-credit-card-2-front me-2"></i><b>IBAN:</b> PK05SADA0000003052019864
+                        </p>
+                    </div>
+                    
+                    <!-- WhatsApp Number Field -->
+                    <div class="glass-card p-3 mb-3" style="border: 2px solid rgba(102, 126, 234, 0.3);">
+                        <h6 class="mb-3 text-white">
+                            <i class="bi bi-whatsapp me-2 text-success"></i>Your WhatsApp Number *
+                        </h6>
+                        <input type="tel" name="whatsapp_number" class="form-control form-control-lg bg-dark text-white border-secondary" 
+                               placeholder="03XX-XXXXXXX" pattern="[0-9]{11}" maxlength="11" required id="whatsappInput">
+                        <small class="text-muted d-block mt-2">
+                            <i class="bi bi-info-circle"></i> Enter your 11-digit WhatsApp number for contact
+                        </small>
+                    </div>
+                    
+                    <!-- Screenshot Upload -->
+                    <div class="glass-card p-3 mt-3" style="border: 2px dashed #0d6efd;">
+                        <h6 class="mb-3 text-white">
+                            <i class="bi bi-image me-2"></i>Upload Payment Screenshot *
+                        </h6>
+                        <input type="file" name="screenshot" accept="image/*" class="form-control bg-dark text-white border-secondary" required id="screenshotInput">
+                        <small class="text-muted d-block mt-2">
+                            <i class="bi bi-info-circle"></i> Upload proof of payment (JPG, PNG, GIF - Max 5MB)
+                        </small>
+                    </div>
+                    
+                    <!-- Info Alert -->
+                    <div class="alert alert-info mt-3 mb-0" style="background-color: rgba(13, 110, 253, 0.1); border: 1px solid rgba(13, 110, 253, 0.3); border-radius: 10px;">
+                        <small class="text-white">
+                            <i class="bi bi-check-circle text-success me-1"></i>
+                            <strong>Note:</strong> Admin will verify your payment and activate your investment within 24 hours.
+                        </small>
                     </div>
                 </div>
-                <div class="modal-footer border-0">
-                    <button class="btn btn-outline-light" data-bs-dismiss="modal">Close</button>
+                <div class="modal-footer border-0 d-flex flex-column gap-2">
+                    <a href="https://wa.me/923474744214?text=Hi%2C%20I%20want%20to%20invest%20in%20Magic%20Impact.%20I%20have%20sent%20the%20payment%20screenshot." 
+                       target="_blank" 
+                       class="btn btn-success w-100"
+                       id="whatsappBtn">
+                        <i class="bi bi-whatsapp me-2"></i>Send Screenshot via WhatsApp
+                    </a>
+                    <div class="d-flex gap-2 w-100">
+                        <button type="button" class="btn btn-outline-light flex-fill" data-bs-dismiss="modal">
+                            <i class="bi bi-x-circle me-1"></i> Cancel
+                        </button>
+                        <button type="submit" class="btn btn-primary flex-fill" id="submitInvestmentBtn">
+                            <i class="bi bi-check-circle-fill me-1"></i> Submit Investment
+                        </button>
+                    </div>
                 </div>
-            </div>
+            </form>
         </div>
     </div>
-
+</div>
     <!-- Footer -->
     <footer class="py-5 border-top border-secondary border-opacity-25" id="contact">
         <div class="container">
@@ -542,7 +602,7 @@
                         <a href="#" class="social-icon"><i class="bi bi-facebook"></i></a>
                         <a href="#" class="social-icon"><i class="bi bi-instagram"></i></a>
                         <a href="#" class="social-icon"><i class="bi bi-linkedin"></i></a>
-                        <a href="#" class="social-icon"><i class="bi bi-telegram"></i></a>
+                        <a href="Sycoqueen32" class="social-icon"><i class="bi bi-telegram"></i></a>
                     </div>
                 </div>
                 <div class="col-lg-2 col-md-4">
@@ -566,8 +626,8 @@
                 <div class="col-lg-4 col-md-4">
                     <h6 class="fw-bold mb-3">Contact Us</h6>
                     <ul class="list-unstyled text-muted">
-                        <li class="mb-2"><i class="bi bi-envelope me-2 text-primary"></i>support@magicimpact.com</li>
-                        <li class="mb-2"><i class="bi bi-telephone me-2 text-primary"></i>+92 300 1234567</li>
+                        <li class="mb-2"><i class="bi bi-envelope me-2 text-primary"></i>sahabbaloch250@gmail.com</li>
+                        <li class="mb-2"><i class="bi bi-telephone me-2 text-primary"></i>+92 3474744214</li>
                         <li class="mb-2"><i class="bi bi-geo-alt me-2 text-primary"></i>Karachi, Pakistan</li>
                     </ul>
                 </div>
@@ -582,12 +642,77 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
-    <script>
-    function openInvestment(plan, amount, daily) {
-        document.getElementById("planName").innerText = plan;
-        document.getElementById("planAmount").innerText = amount;
-        new bootstrap.Modal(document.getElementById('investmentModal')).show();
+<script>
+function openInvestment(plan, amount, daily) {
+    // Display values
+    document.getElementById("planName").innerText = plan;
+    document.getElementById("planAmount").innerText = amount;
+    document.getElementById("planDaily").innerText = daily;
+    
+    // Hidden input values
+    document.getElementById("planNameInput").value = plan;
+    document.getElementById("planAmountInput").value = amount;
+    document.getElementById("planDailyInput").value = daily;
+    
+    // Update WhatsApp link with plan details
+    var whatsappMsg = `Hi, I want to invest in *${plan}* (Amount: Rs ${amount}, Daily Income: Rs ${daily}). I have sent the payment screenshot.`;
+    var whatsappLink = `https://wa.me/923474744214?text=${encodeURIComponent(whatsappMsg)}`;
+    document.getElementById("whatsappBtn").href = whatsappLink;
+    
+    // Reset form
+    document.getElementById('investmentForm').reset();
+    document.getElementById("planNameInput").value = plan;
+    document.getElementById("planAmountInput").value = amount;
+    document.getElementById("planDailyInput").value = daily;
+    
+    // Open modal
+    var modal = new bootstrap.Modal(document.getElementById('investmentModal'));
+    modal.show();
+}
+
+// Form validation with loading state
+document.getElementById('investmentForm')?.addEventListener('submit', function(e) {
+    var screenshot = document.getElementById('screenshotInput');
+    var whatsapp = document.getElementById('whatsappInput');
+    var submitBtn = document.getElementById('submitInvestmentBtn');
+    
+    // Check WhatsApp number
+    if (!whatsapp.value || whatsapp.value.length !== 11) {
+        e.preventDefault();
+        alert('⚠️ Please enter a valid 11-digit WhatsApp number!');
+        whatsapp.focus();
+        return false;
     }
-    </script>
+    
+    // Check if file is selected
+    if (!screenshot.files || screenshot.files.length === 0) {
+        e.preventDefault();
+        alert('⚠️ Please upload a payment screenshot!');
+        return false;
+    }
+    
+    // Check file size (max 5MB)
+    if (screenshot.files[0].size > 5 * 1024 * 1024) {
+        e.preventDefault();
+        alert('⚠️ File size too large! Maximum 5MB allowed.');
+        return false;
+    }
+    
+    // Check file type
+    var fileName = screenshot.files[0].name;
+    var fileExt = fileName.split('.').pop().toLowerCase();
+    var allowedTypes = ['jpg', 'jpeg', 'png', 'gif'];
+    
+    if (!allowedTypes.includes(fileExt)) {
+        e.preventDefault();
+        alert('⚠️ Invalid file type! Please upload JPG, PNG, or GIF only.');
+        return false;
+    }
+    
+    // Show loading state
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Submitting...';
+});
+</script>
 </body>
 </html>

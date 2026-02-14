@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Magic Impact</title>
-    <link rel="stylesheet" href="../static/css/custom.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -13,15 +15,16 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f5f7fa;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
             min-height: 100vh;
+            color: white;
         }
 
         .navbar {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             padding: 20px 0;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
         }
 
         .navbar-content {
@@ -31,39 +34,60 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
         }
 
         .navbar-brand {
             color: white;
             font-size: 24px;
             font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .navbar-user {
             display: flex;
             align-items: center;
-            gap: 20px;
+            gap: 15px;
+            flex-wrap: wrap;
         }
 
         .user-info {
             color: white;
             font-weight: 500;
+            padding: 8px 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
         }
 
-        .btn-logout {
+        .btn-nav {
             background: rgba(255, 255, 255, 0.2);
             color: white;
             border: 2px solid white;
             padding: 8px 20px;
-            border-radius: 6px;
+            border-radius: 8px;
             text-decoration: none;
             font-weight: 600;
             transition: all 0.3s;
+            display: inline-block;
+        }
+
+        .btn-nav:hover {
+            background: white;
+            color: #667eea;
+            transform: translateY(-2px);
+        }
+
+        .btn-logout {
+            background: rgba(255, 59, 48, 0.8);
+            border-color: rgba(255, 59, 48, 1);
         }
 
         .btn-logout:hover {
-            background: white;
-            color: #667eea;
+            background: rgba(255, 59, 48, 1);
+            color: white;
         }
 
         .dashboard-container {
@@ -72,11 +96,13 @@
             padding: 0 20px;
         }
 
-        .welcome-card {
-            background: white;
-            border-radius: 15px;
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
             padding: 40px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
             margin-bottom: 30px;
             animation: fadeIn 0.5s ease-out;
         }
@@ -93,35 +119,54 @@
         }
 
         .welcome-card h1 {
-            color: #333;
-            margin-bottom: 10px;
             font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .welcome-card p {
-            color: #666;
+            color: rgba(255, 255, 255, 0.7);
             font-size: 16px;
         }
 
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 20px;
             margin-top: 30px;
         }
 
         .stat-card {
-            background: white;
-            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
             padding: 30px;
-            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
             transition: all 0.3s;
             animation: fadeIn 0.5s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
         }
 
         .stat-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+            border-color: rgba(102, 126, 234, 0.5);
         }
 
         .stat-card:nth-child(1) {
@@ -136,108 +181,417 @@
             animation-delay: 0.3s;
         }
 
-        .stat-icon {
-            font-size: 40px;
+        .stat-card:nth-child(4) {
+            animation-delay: 0.4s;
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 15px;
         }
 
+        .stat-icon {
+            font-size: 40px;
+            opacity: 0.9;
+        }
+
+        .stat-badge {
+            background: rgba(102, 126, 234, 0.2);
+            color: #667eea;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
         .stat-title {
-            color: #666;
+            color: rgba(255, 255, 255, 0.6);
             font-size: 14px;
             margin-bottom: 10px;
             text-transform: uppercase;
             letter-spacing: 1px;
+            font-weight: 500;
         }
 
         .stat-value {
-            color: #333;
-            font-size: 28px;
+            font-size: 32px;
             font-weight: 700;
+            color: white;
+            margin-bottom: 10px;
         }
 
-        .quick-actions {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        .stat-footer {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 13px;
+            margin-top: 15px;
+        }
+
+        .stat-footer.positive {
+            color: #10b981;
+        }
+
+        .stat-footer.warning {
+            color: #f59e0b;
+        }
+
+        .investments-section {
             margin-top: 30px;
         }
 
-        .quick-actions h2 {
-            color: #333;
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .investment-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+        }
+
+        .investment-card:hover {
+            border-color: rgba(102, 126, 234, 0.5);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.2);
+        }
+
+        .investment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .investment-plan {
+            font-size: 18px;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .investment-status {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-active {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+
+        .status-pending {
+            background: rgba(245, 158, 11, 0.2);
+            color: #f59e0b;
+        }
+
+        .status-completed {
+            background: rgba(59, 130, 246, 0.2);
+            color: #3b82f6;
+        }
+
+        .investment-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .detail-label {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+
+        .detail-value {
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .progress-bar-container {
+            margin-top: 15px;
+        }
+
+        .progress-bar {
+            background: rgba(255, 255, 255, 0.1);
+            height: 8px;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            height: 100%;
+            transition: width 0.3s;
+        }
+
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .quick-actions {
+            margin-top: 30px;
         }
 
         .action-buttons {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 15px;
+            margin-top: 20px;
         }
 
         .action-btn {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 15px 25px;
-            border-radius: 8px;
+            padding: 18px 25px;
+            border-radius: 12px;
             text-decoration: none;
             text-align: center;
             font-weight: 600;
             transition: all 0.3s;
-            display: block;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .action-btn:hover {
             transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+            color: white;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .empty-state i {
+            font-size: 60px;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+
+        @media (max-width: 768px) {
+            .navbar-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .action-buttons {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-value {
+                font-size: 28px;
+            }
         }
     </style>
 </head>
 <body>
     <nav class="navbar">
         <div class="navbar-content">
-            <div class="navbar-brand">✨ Magic Impact</div>
+            <div class="navbar-brand">
+                <i class="bi bi-diamond-fill"></i>
+                Magic Impact
+            </div>
             <div class="navbar-user">
-                <span class="user-info">👋 {{ username }}</span>
-                <a href="/logout" class="btn-logout">Logout</a>
+                <span class="user-info">
+                    <i class="bi bi-person-circle"></i> {{ username }}
+                </span>
+                <a href="/" class="btn-nav">
+                    <i class="bi bi-house-fill"></i> Home
+                </a>
+                <a href="/withdraw" class="btn-nav">
+                    <i class="bi bi-wallet2"></i> Withdraw
+                </a>
+                <a href="/logout" class="btn-nav btn-logout">
+                    <i class="bi bi-box-arrow-right"></i> Logout
+                </a>
             </div>
         </div>
     </nav>
 
     <div class="dashboard-container">
-        <div class="welcome-card">
-            <h1>Welcome, {{ username }}! 🎉</h1>
-            <p>You are successfully logged into your Magic Impact dashboard.</p>
+        <!-- Welcome Card -->
+        <div class="glass-card welcome-card">
+            <h1>Welcome Back, {{ username }}! 🎉</h1>
+            <p>Track your investments and manage your portfolio from your dashboard.</p>
         </div>
 
+        <!-- Stats Grid -->
         <div class="stats-grid">
             <div class="stat-card">
-                <div class="stat-icon">📊</div>
-                <div class="stat-title">Total Projects</div>
-                <div class="stat-value">12</div>
+                <div class="stat-header">
+                    <div class="stat-icon">💰</div>
+                    <span class="stat-badge">BALANCE</span>
+                </div>
+                <div class="stat-title">Total Balance</div>
+                <div class="stat-value">Rs {{ balance|default(100) }}</div>
+                <div class="stat-footer positive">
+                    <i class="bi bi-arrow-up-circle-fill"></i>
+                    <span>Available for withdrawal</span>
+                </div>
             </div>
 
             <div class="stat-card">
-                <div class="stat-icon">⚡</div>
-                <div class="stat-title">Active Tasks</div>
-                <div class="stat-value">28</div>
+                <div class="stat-header">
+                    <div class="stat-icon">📊</div>
+                    <span class="stat-badge">INVESTED</span>
+                </div>
+                <div class="stat-title">Total Invested</div>
+                <div class="stat-value">Rs {{ total_invested|default(0) }}</div>
+                <div class="stat-footer">
+                    <i class="bi bi-graph-up"></i>
+                    <span>Across all plans</span>
+                </div>
             </div>
 
             <div class="stat-card">
-                <div class="stat-icon">✅</div>
-                <div class="stat-title">Completed</div>
-                <div class="stat-value">156</div>
+                <div class="stat-header">
+                    <div class="stat-icon">💵</div>
+                    <span class="stat-badge">DAILY</span>
+                </div>
+                <div class="stat-title">Daily Income</div>
+                <div class="stat-value">Rs {{ total_daily_income|default(0) }}</div>
+                <div class="stat-footer positive">
+                    <i class="bi bi-calendar-check"></i>
+                    <span>Earning every day</span>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon">📈</div>
+                    <span class="stat-badge">EARNINGS</span>
+                </div>
+                <div class="stat-title">Total Earned</div>
+                <div class="stat-value">Rs {{ total_earned|default(0) }}</div>
+                <div class="stat-footer positive">
+                    <i class="bi bi-trophy-fill"></i>
+                    <span>Total profit generated</span>
+                </div>
             </div>
         </div>
 
+        <!-- Active Investments -->
+        <div class="investments-section">
+            <div class="glass-card">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <i class="bi bi-briefcase-fill"></i> Active Investments
+                    </h2>
+                </div>
+
+                {% if investments and investments|length > 0 %}
+                    {% for investment in investments %}
+                    <div class="investment-card">
+                        <div class="investment-header">
+                            <div class="investment-plan">{{ investment.plan_name }}</div>
+                            <span class="investment-status status-{{ investment.status|default('active') }}">
+                                {{ investment.status|default('Active')|upper }}
+                            </span>
+                        </div>
+                        
+                        <div class="investment-details">
+                            <div class="detail-item">
+                                <span class="detail-label">Investment Amount</span>
+                                <span class="detail-value">Rs {{ investment.amount }}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Daily Income</span>
+                                <span class="detail-value">Rs {{ investment.daily_income }}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Days Completed</span>
+                                <span class="detail-value">{{ investment.days_completed|default(0) }}/30</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Total Return</span>
+                                <span class="detail-value">Rs {{ investment.total_return|default(investment.daily_income * 30) }}</span>
+                            </div>
+                        </div>
+
+                        <div class="progress-bar-container">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: {{ (investment.days_completed|default(0) / 30 * 100)|int }}%"></div>
+                            </div>
+                            <div class="progress-text">
+                                <span>Progress</span>
+                                <span>{{ (investment.days_completed|default(0) / 30 * 100)|int }}%</span>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-state">
+                        <i class="bi bi-inbox"></i>
+                        <h3>No Active Investments</h3>
+                        <p>Start investing today to grow your wealth!</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
         <div class="quick-actions">
-            <h2>Quick Actions</h2>
-            <div class="action-buttons">
-                <a href="#" class="action-btn">➕ New Project</a>
-                <a href="#" class="action-btn">📝 Create Task</a>
-                <a href="#" class="action-btn">👥 Team Settings</a>
-                <a href="#" class="action-btn">⚙️ Account Settings</a>
+            <div class="glass-card">
+                <h2 class="section-title">
+                    <i class="bi bi-lightning-fill"></i> Quick Actions
+                </h2>
+                <div class="action-buttons">
+                    <a href="/#plans" class="action-btn">
+                        <i class="bi bi-plus-circle-fill"></i>
+                        New Investment
+                    </a>
+                    <a href="/withdraw" class="action-btn">
+                        <i class="bi bi-wallet2"></i>
+                        Withdraw Funds
+                    </a>
+                    <a href="/referral" class="action-btn">
+                        <i class="bi bi-people-fill"></i>
+                        Refer & Earn
+                    </a>
+                    <a href="/support" class="action-btn">
+                        <i class="bi bi-headset"></i>
+                        Get Support
+                    </a>
+                </div>
             </div>
         </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
