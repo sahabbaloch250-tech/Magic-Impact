@@ -536,7 +536,11 @@ def withdraw():
     easypaisa = user['easypaisa_number'] if isinstance(user, dict) else user[1]
     jazzcash = user['jazzcash_number'] if isinstance(user, dict) else user[2]
     
-    return render_template('withdraw.html', balance=balance, easypaisa=easypaisa, jazzcash=jazzcash)
+    return render_template('withdraw.html', 
+                         username=session['username'],
+                         balance=balance, 
+                         easypaisa=easypaisa, 
+                         jazzcash=jazzcash)
 
 @app.route('/dashboard')
 def dashboard():
@@ -1113,7 +1117,13 @@ def debug_db():
         return f"<h2>Error:</h2><p>{str(e)}</p>"
 
 if __name__ == '__main__':
-    os.makedirs('database', exist_ok=True)
+    # Only create local folders if not using Railway/PostgreSQL
+    if not os.environ.get('DATABASE_URL'):
+        os.makedirs('database', exist_ok=True)
     os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+    
     init_db()
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    
+    # Use Railway's PORT or default to 5000 for local
+    port = int(os.environ.get('PORT', 5000))
+    app.run(debug=False, host='0.0.0.0', port=port)
